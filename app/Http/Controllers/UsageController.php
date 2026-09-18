@@ -9,6 +9,27 @@ use Illuminate\Http\Request;
 class UsageController extends Controller
 {
     /**
+     * Return the current wifi name (single-admin system: the most
+     * recently updated user row).
+     */
+    public function wifiname()
+    {
+        $admin = User::latest('updated_at')->first();
+
+        if (!$admin || empty($admin->wifiname)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Wifi name is not set yet.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'wifiname' => $admin->wifiname,
+        ]);
+    }
+
+    /**
      * Store a usage record.
      *
      * The client only sends `password`. The `name` is copied from the
